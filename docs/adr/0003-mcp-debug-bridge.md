@@ -1,12 +1,5 @@
 # 0003: MCP debug bridge for agent-driven testing
 
-## Status
-
-Proposed (2026-10-06). Becomes Accepted when the user commits it. One question
-is deliberately left open: whether to take the official MCP Go SDK as a
-dependency (see Open question). It must be settled by amending this ADR before
-the MCP layer is written.
-
 ## Context
 
 The development agents (QA playtester, engineers, designer) can already test the
@@ -122,9 +115,9 @@ This ADR does not decide how `cmd/mdbridge` speaks MCP. The options are:
   dependency. Costs: protocol upgrades are manual, and input schemas are
   written by hand.
 
-Both options affect only `cmd/mdbridge`, and the dependency would be confined
-to that binary. When settled, amend this section with the choice and the
-reason. If the SDK is chosen, also add it to the dependency list in
+Settle this before the MCP layer is written. Both options affect only
+`cmd/mdbridge`, and the dependency would be confined to that binary. When
+settled, amend this section with the choice and the reason. If the SDK is chosen, also add it to the dependency list in
 `docs/architecture.md` and to the rules in `internal/archtest`.
 
 ## Alternatives considered

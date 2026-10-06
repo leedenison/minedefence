@@ -1,9 +1,5 @@
 # 0002: Multiplayer topology, tick model and transport
 
-## Status
-
-Proposed (2026-10-06). Becomes Accepted when the user commits it.
-
 ## Context
 
 Co-op is the designed experience, and solo must be a complete session (vision

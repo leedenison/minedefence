@@ -42,10 +42,10 @@ targets if they are not stated. Then, in order:
 
 ## Writing an ADR
 
-Create `docs/adr/NNNN-<slug>.md`, zero-padded. Sections: **Status** (proposed,
-accepted, superseded by NNNN), **Context**, **Decision**, **Alternatives considered**,
-**Consequences**. Keep each under a page. Once accepted, never edit an ADR. Write a new
-one that supersedes it.
+Create `docs/adr/NNNN-<slug>.md`, zero-padded. Sections: **Context**, **Decision**,
+**Alternatives considered**, **Consequences**. Do not add a status section: an ADR is
+accepted once the user commits it. Keep each under a page. Never edit an accepted ADR.
+Write a new one that names the ADR it supersedes.
 
 Decisions that need an ADR: anything about language, engine, dependencies, module
 boundaries, data formats, save formats, threading, networking, or testing strategy.

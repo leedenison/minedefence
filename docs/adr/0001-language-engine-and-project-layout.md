@@ -1,9 +1,5 @@
 # 0001: Language, engine, project layout and balance configuration
 
-## Status
-
-Proposed (2026-10-06). Becomes Accepted when the user commits it.
-
 ## Context
 
 Minedefence is a 2D side-scrolling co-op factory and tower-defence game
