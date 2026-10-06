@@ -64,7 +64,7 @@ Changing these rules needs an ADR, and the test and this file must change togeth
 - **Fixed tick.** `sim.TicksPerSecond = 20`. The session calls `World.Step` once
   every 3 Ebitengine updates (60 TPS). The simulation measures time only in
   ticks. Balance durations are given in seconds and converted to ticks once,
-  at load time.
+  in `sim.New` (see Balance configuration for the rule).
 - **Determinism.** State after tick N depends only on the balance `Config`, the
   seed and the commands for ticks 1 to N. Randomness comes only from the
   `math/rand/v2` PCG source held in `World`. Never iterate over a map where
@@ -72,15 +72,35 @@ Changing these rules needs an ADR, and the test and this file must change togeth
   Prefer integer tile coordinates.
 - **Interface to the simulation** (grown as the slice needs it, ADR 0002):
   - `sim.New(cfg, seed)` creates a world.
-  - `Step(cmds []Command)` advances one tick. Commands are plain data and
-    carry a player slot and sequence number. The skeleton's `Step()` takes
-    no commands yet. It gains the parameter when the first command type is
-    added.
-  - Read-only accessors serve `render` and `ui`.
+  - `Step(cmds []Command)` advances one tick. See Commands below.
+  - Read-only accessors serve `render` and `ui` alike. Any rule that decides
+    what a command would do (for example, which cells a DesignateMine would
+    mark, for the drag preview) is a read-only query on `World`. `ui` calls
+    it and never re-implements the rule.
   - A per-tick change set serves rendering and network deltas.
   - Snapshot encode/restore and a state hash serve `netplay`.
 
   Presentation packages never mutate sim state. They issue commands.
+- **Commands.** One envelope struct, one pointer field per command kind:
+
+  ```go
+  type Command struct {
+      Slot int    // player slot, 0 to 3
+      Seq  uint64 // per-slot sequence, increasing in issue order
+      DesignateMine *DesignateMine
+      CancelMine    *CancelMine
+      // one field per new kind
+  }
+  ```
+
+  Exactly one payload is non-nil. Payloads hold only exported integer or
+  string fields, with no pointers into the world, so `gob` encodes them
+  without registration. `Step` sorts its own copy of `cmds` stably by
+  (Slot, Seq) and applies them in that order at the start of the tick. It
+  skips a command with no payload, more than one payload or an out-of-range
+  slot, and never panics on bad input. `ui` fills in the payload only. The
+  session stamps `Slot` and `Seq` and buffers commands until the next `Step`
+  (in the solo build that is `app`, later `netplay`).
 - **Session.** Solo play is a host with no listener. Host and solo both step the
   authoritative world. Clients apply snapshots and deltas to a replica and never
   call `Step`.
@@ -94,6 +114,14 @@ Changing these rules needs an ADR, and the test and this file must change togeth
 - The file is embedded into the executable and parsed by `internal/balance` into
   `balance.Config`. Unknown keys are an error, so each new key needs a matching
   `Config` field. Adding one is a gameplay-engineer task.
+- **Seconds to ticks.** `Config` stores durations as `float64` seconds, as
+  written in the file. `balance.Parse` rejects a negative, NaN or infinite
+  duration. `sim.New` converts each one once with
+  `balance.SecondsToTicks(seconds float64, ticksPerSecond int) int`, passing
+  `sim.TicksPerSecond`: round half up, minimum 1, that is
+  `max(1, int(math.Floor(seconds*float64(tps) + 0.5)))`. At 20 TPS every
+  exact half tick (an odd number of 1/40 s) rounds up correctly in `float64`.
+  Tests read tick counts through sim accessors rather than recomputing them.
 - After any edit, run `go test ./...`. `TestShippedConfigParses` checks the file.
 - In multiplayer, the host and clients must have identical balance files. The
   handshake compares hashes.

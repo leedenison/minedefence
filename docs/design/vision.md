@@ -65,10 +65,10 @@ The vertical slice is one map, one minion type, a short pipeline (ore to a singl
 
 ## Open questions
 
-- Target platform and distribution (desktop OS set, Steam or other storefront, browser?). Decides: architect, with the producer.
-- Multiplayer topology: host-authoritative peer session, dedicated server or relay. Decides: architect.
-- Supported player count per session (the designer proposes a range of 1 to 4; the ceiling has architecture cost). Decides: architect and producer jointly, designer to confirm it does not break the pillars.
+- Resolved: target platform and distribution. Windows x64 only, with no storefront or browser build. See `docs/adr/0001-language-engine-and-project-layout.md`.
+- Resolved: multiplayer topology. A host-authoritative listen server over TCP, with no relay and no dedicated server. See `docs/adr/0002-multiplayer-topology.md`.
+- Resolved: player count per session. 1 to 4 including the host. See `docs/adr/0002-multiplayer-topology.md`. The designer confirms this range fits "Better together, whole alone".
 - Session persistence: are worlds saved and resumed across sessions, or is a run a single sitting? Decides: designer, after producer confirms it fits the first iteration scope.
 - Win condition for a session: a progression goal, survival for a duration, or open-ended? Decides: designer, to be settled before the progression-tree spec.
 - Whether minions can die permanently and be replaced through the factory, or only be incapacitated. Decides: designer, in the minions spec.
-- Art and audio direction for legibility (how enemies, open regions and starved pipelines are shown). Decides: designer in the feedback sections of each spec, with whoever owns rendering.
+- Art and audio direction for legibility (how enemies, open regions and starved pipelines are shown). Decides: designer in the feedback sections of each spec, with whoever owns rendering. Blocks, mining marks, exposed ground and open regions are settled in the Feedback section of `mechanics/map-and-mining.md`. Enemies and starved pipelines remain open.
