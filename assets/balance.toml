@@ -1,0 +1,26 @@
+# Minedefence balance configuration.
+#
+# Owner: game-designer. Every tunable value in the game lives here and nowhere
+# else. Format and conventions are set in docs/adr/0001 and docs/architecture.md.
+#
+# Conventions:
+#   - One TOML table per system, named after its spec in docs/design/mechanics/
+#     with dashes as underscores, e.g. [map_and_mining], [towers_and_defence].
+#   - Keys are snake_case and include their unit where one applies:
+#     _seconds, _blocks, _per_second, _hp, _count.
+#   - Every key has a comment block directly above it with three lines:
+#       What:  what the value controls.
+#       Why:   the design reasoning or playtest evidence behind it.
+#       Range: the safe range to experiment within without breaking a pillar.
+#   - Durations are written in seconds; the simulation converts them to ticks.
+#
+# Example:
+#
+#   [map_and_mining]
+#   # What:  Seconds for one minion to mine one dirt block.
+#   # Why:   Short enough that early digging feels responsive.
+#   # Range: 0.5 to 5.
+#   dirt_mine_seconds = 1.5
+#
+# The game rejects keys that the code does not read. After any edit run
+# `go test ./...` from the repository root.

@@ -1,0 +1,6 @@
+# Keep LF in source so gofmt agrees on every machine, including Windows CI
+# runners where git would otherwise convert to CRLF on checkout.
+* text=auto eol=lf
+*.png binary
+*.ogg binary
+*.wav binary
